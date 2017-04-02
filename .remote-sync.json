@@ -1,0 +1,18 @@
+{
+  "uploadOnSave": true,
+  "useAtomicWrites": false,
+  "deleteLocal": false,
+  "hostname": "127.0.0.1",
+  "port": "4022",
+  "target": "/opt/portainer-develop",
+  "ignore": [
+    ".remote-sync.json",
+    ".git/**",
+    "bower_components/**",
+    "node_modules/**"
+  ],
+  "username": "root",
+  "password": "achuthan",
+  "watch": [],
+  "transport": "scp"
+}
