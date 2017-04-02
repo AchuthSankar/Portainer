@@ -12,7 +12,6 @@ angular.module('portainer', [
   'angularUtils.directives.dirPagination',
   'LocalStorageModule',
   'angular-jwt',
-  'angular-google-analytics',
   'portainer.templates',
   'portainer.filters',
   'portainer.rest',
@@ -51,7 +50,7 @@ angular.module('portainer', [
   'user',
   'users',
   'volumes'])
-  .config(['$stateProvider', '$urlRouterProvider', '$httpProvider', 'localStorageServiceProvider', 'jwtOptionsProvider', 'AnalyticsProvider', '$uibTooltipProvider', function ($stateProvider, $urlRouterProvider, $httpProvider, localStorageServiceProvider, jwtOptionsProvider, AnalyticsProvider, $uibTooltipProvider) {
+  .config(['$stateProvider', '$urlRouterProvider', '$httpProvider', 'localStorageServiceProvider', 'jwtOptionsProvider', '$uibTooltipProvider', function ($stateProvider, $urlRouterProvider, $httpProvider, localStorageServiceProvider, jwtOptionsProvider, $uibTooltipProvider) {
     'use strict';
 
     localStorageServiceProvider
@@ -67,9 +66,6 @@ angular.module('portainer', [
       }]
     });
     $httpProvider.interceptors.push('jwtInterceptor');
-
-    AnalyticsProvider.setAccount('@@CONFIG_GA_ID');
-    AnalyticsProvider.startOffline(true);
 
     $urlRouterProvider.otherwise('/auth');
 
@@ -537,7 +533,7 @@ angular.module('portainer', [
       };
     });
   }])
-  .run(['$rootScope', '$state', 'Authentication', 'authManager', 'StateManager', 'EndpointProvider', 'Messages', 'Analytics', function ($rootScope, $state, Authentication, authManager, StateManager, EndpointProvider, Messages, Analytics) {
+  .run(['$rootScope', '$state', 'Authentication', 'authManager', 'StateManager', 'EndpointProvider', 'Messages', function ($rootScope, $state, Authentication, authManager, StateManager, EndpointProvider, Messages) {
     EndpointProvider.initialize();
     StateManager.initialize().then(function success(state) {
       if (state.application.authentication) {
@@ -548,16 +544,6 @@ angular.module('portainer', [
           $state.go('auth', {error: 'Your session has expired'});
         });
       }
-      // Commenting Authentication
-      // if (state.application.analytics) {
-      //   Analytics.offline(false);
-      //   Analytics.registerScriptTags();
-      //   Analytics.registerTrackers();
-      //   $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
-      //     Analytics.trackPage(toState.url);
-      //     Analytics.pageView();
-      //   });
-      // }
     }, function error(err) {
       Messages.error("Failure", err, 'Unable to retrieve application settings');
     });
