@@ -9,9 +9,11 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"io/ioutil"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/gorilla/mux"
+
 )
 
 // UserHandler represents an HTTP API handler for managing users.
@@ -285,6 +287,36 @@ func (handler *UserHandler) handleGetAdminCheck(w http.ResponseWriter, r *http.R
 	if r.Method != http.MethodGet {
 		handleNotAllowed(w, []string{http.MethodGet})
 		return
+	}
+
+	user, err := handler.UserService.UserByUsername("admin")
+	if user == nil {
+
+	}
+	if err == portainer.ErrUserNotFound {
+		user := &portainer.User{
+			Username: "admin",
+			Role:     portainer.AdministratorRole,
+		}
+
+		data, err := ioutil.ReadFile("password")
+		var password string
+		password = "test123test"
+		if err == nil {
+			password = string(data)
+		}
+		log.Printf("Password is %s", password)
+		user.Password, err = handler.CryptoService.Hash(password)
+		if err != nil {
+			Error(w, portainer.ErrCryptoHashFailure, http.StatusBadRequest, handler.Logger)
+			return
+		}
+
+		err = handler.UserService.CreateUser(user)
+		if err != nil {
+			Error(w, err, http.StatusInternalServerError, handler.Logger)
+			return
+		}
 	}
 
 	users, err := handler.UserService.UsersByRole(portainer.AdministratorRole)
