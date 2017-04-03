@@ -7,7 +7,7 @@ angular.module('portainer.services')
   }
   var firstLoad = (localStorage.getItem('firstLoad') || 'true') === 'true';
   return {
-    displayAll: true,
+    displayAll: false,
     endpoint: DOCKER_ENDPOINT,
     uiVersion: UI_VERSION,
     url: url,
